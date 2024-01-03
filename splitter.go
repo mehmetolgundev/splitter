@@ -12,7 +12,7 @@ type Result struct {
 	Files [][]byte
 }
 
-func Split(filePath string, chunkSize byte) <-chan Result {
+func Split(filePath string, chunkSize int) <-chan Result {
 	c := make(chan Result)
 	go func() {
 		result := Result{}
