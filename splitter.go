@@ -1,9 +1,8 @@
-package splitter
+package main
 
 import (
 	"bufio"
 	"io"
-	"log"
 	"os"
 )
 
@@ -21,17 +20,25 @@ func Split(filePath string, chunkSize int) <-chan Result {
 			c <- Result{
 				Err: err,
 			}
+			return
 		}
-		defer log.Fatal(f.Close())
-
 		r := bufio.NewReader(f)
 		for {
 			chunk := make([]byte, chunkSize)
-			_, err = r.Read(chunk)
-			if err == io.EOF {
-				break
+
+			n, err := r.Read(chunk)
+
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				c <- Result{
+					Err: err,
+				}
+				return
 			}
-			result.Files = append(result.Files, chunk)
+
+			result.Files = append(result.Files, chunk[:n])
 		}
 		c <- result
 	}()
