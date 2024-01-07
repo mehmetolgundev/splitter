@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
+	"log"
 	"os"
 )
 
@@ -44,4 +46,35 @@ func Split(filePath string, chunkSize int) <-chan Result {
 	}()
 
 	return c
+}
+func Concat(files [][]byte, filename string) {
+	var file []byte
+	for _, f := range files {
+		file = append(file, f...)
+	}
+	err := os.WriteFile(filename, file, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+func ConcatFiles(prefixFileName string, extension string, newFileName string) {
+	var file []byte
+	counter := 0
+	var err error
+	for err == nil {
+		fileName := fmt.Sprintf("%s%d.%s", prefixFileName, counter, extension)
+		if _, err := os.Stat(fileName); os.IsNotExist(err) {
+			break
+		}
+		b, err := os.ReadFile(fileName)
+		if err != nil {
+			log.Fatal(err)
+		}
+		file = append(file, b...)
+		counter += 1
+	}
+	err = os.WriteFile(newFileName, file, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
