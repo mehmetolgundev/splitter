@@ -4,7 +4,7 @@ import "testing"
 
 func TestSplit(t *testing.T) {
 
-	chanResult := Split("../test/testfile", 1)
+	chanResult := Split("../../test/testfile", 1)
 	if chanResult == nil {
 		t.Fatal("channel not found")
 	}
